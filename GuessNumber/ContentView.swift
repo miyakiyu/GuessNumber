@@ -8,29 +8,31 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State var num: Int = 0
-    @State var ans = Int.random(in: 0...9)
-    @State var isPress = false
-    @State var count = 0
-    @State var check_reset = false
+    @State private var num: Int = 0
+    @State private var ans = Int.random(in: 0...9)
+    @State private var isPress = false
+    @State private var count = 0
+    @State private var resultText = ""
     
     var body: some View {
-        VStack{
+        VStack {
             VStack {
                 Text("Guess the Number")
                     .font(.title)
                 Text("My ID:410921379")
                     .padding()
             }
-            .padding(50)
-            VStack{
+            .padding(80)
+            VStack {
                 TextField("Enter the number:", value: $num, format: .number)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                //confirm
-                Button{
+                
+                // Confirm button
+                Button {
+                    // Check the number when the button is pressed
                     isPress = true
-                    count += 1
-                }label: {
+                    checkNumber()
+                } label: {
                     Text("Confirm")
                         .frame(width: 100, height: 25)
                         .padding()
@@ -38,39 +40,18 @@ struct ContentView: View {
                         .foregroundColor(.white)
                         .background(Color.gray)
                         .cornerRadius(20)
-                }//Button 1
-                
-                if isPress{
-                    if(num == ans){
-                        Text("Correct(fails = \(count))")
-                            .foregroundColor(.red)
-                            .font(.title)
-                    }
-                    else if(num < ans){
-                        Text("Too small(fails = \(count))")
-                            .foregroundColor(.red)
-                            .font(.title)
-                    }
-                    else if(num > ans){
-                        Text("Too large(fails = \(count))")
-                            .foregroundColor(.red)
-                            .font(.title)
-                    }
-                    else if(count >= 5){
-                        Text("Fail(fails = \(count))")
-                            .foregroundColor(.red)
-                            .font(.title)
-                    }
                 }
                 
-                if count >= 5 || num == ans{
-                    //Reset
-                    Button{
-                        ans = Int.random(in: 0...9)
-                        isPress = false
-                        count = 0
-                        num = 0
-                    }label: {
+                // Display the result text
+                Text(resultText)
+                    .foregroundColor(.red)
+                    .font(.title)
+                
+                // Reset button
+                if count >= 5 || resultText.contains("Correct") {
+                    Button {
+                        resetGame()
+                    } label: {
                         Text("Restart")
                             .frame(width: 100, height: 25)
                             .padding()
@@ -78,12 +59,41 @@ struct ContentView: View {
                             .foregroundColor(.white)
                             .background(Color.blue)
                             .cornerRadius(20)
-                    }//Button 2
+                    }
                 }
             }
         }
     }
+    
+    //check the number
+    func checkNumber() {
+        if num == ans {
+            resultText = "Correct(fails = \(count))"
+        }
+        else if num < ans {
+            resultText = "Too small(fails = \(count))"
+            count += 1
+        }
+        else if num > ans {
+            resultText = "Too large(fails = \(count))"
+            count += 1
+        }
+        else if count >= 5 {
+            resultText = "Fail(fails = \(count))"
+            count += 1
+        }
+    }
+    
+    //Reset
+    func resetGame() {
+        ans = Int.random(in: 0...9)
+        isPress = false
+        count = 0
+        num = 0
+        resultText = ""
+    }
 }
+
 
 
 
